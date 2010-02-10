@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Author: Douglas Creager <dcreager@dcreager.net>
+# This file is placed into the public domain.
 
 # Calculates the current version number.  If possible, this is the
 # output of “git describe”, modified to conform to the versioning
