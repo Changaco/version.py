@@ -1,104 +1,64 @@
-# -*- coding: utf-8 -*-
-# Author: Douglas Creager <dcreager@dcreager.net>
+# Original author: Douglas Creager <dcreager@dcreager.net>
 # This file is placed into the public domain.
 
-# Calculates the current version number.  If possible, this is the
-# output of “git describe”, modified to conform to the versioning
-# scheme that setuptools uses.  If “git describe” returns an error
-# (most likely because we're in an unpacked copy of a release tarball,
-# rather than in a git working copy), then we fall back on reading the
-# contents of the RELEASE-VERSION file.
-#
-# To use this script, simply import it your setup.py file, and use the
-# results of get_git_version() as your package version:
-#
-# from version import *
-#
-# setup(
-#     version=get_git_version(),
-#     .
-#     .
-#     .
-# )
-#
-# This will automatically update the RELEASE-VERSION file, if
-# necessary.  Note that the RELEASE-VERSION file should *not* be
-# checked into git; please add it to your top-level .gitignore file.
-#
-# You'll probably want to distribute the RELEASE-VERSION file in your
-# sdist tarballs; to do this, just create a MANIFEST.in file that
-# contains the following line:
-#
-#   include RELEASE-VERSION
+"""
+Gets the current version number.
+If in a git repository, it is the current git tag.
+Otherwise it is the content of the RELEASE-VERSION file.
 
-__all__ = ("get_git_version")
+To use this script, simply import it your setup.py file, and use the
+results of get_version() as your package version:
 
-from subprocess import Popen, PIPE
+    from version import *
+
+    setup(
+        version=get_version(),
+        .
+        .
+        .
+    )
+
+This will automatically update the RELEASE-VERSION file. Note that
+the RELEASE-VERSION file should *not* be checked into git, you can
+add it to your .gitignore file.
+
+You need to distribute the RELEASE-VERSION file in your sdist
+packages by adding the following line in the MANIFEST.in file:
+
+    include RELEASE-VERSION
+"""
+
+__all__ = ('get_version')
 
 
-def call_git_describe(abbrev=4):
-    try:
-        p = Popen(['git', 'describe', '--abbrev=%d' % abbrev],
-                  stdout=PIPE, stderr=PIPE)
-        p.stderr.close()
-        line = p.stdout.readlines()[0]
-        return line.strip()
-
-    except:
-        return None
+from os.path import dirname, isdir, join
+from subprocess import CalledProcessError, check_output
 
 
-def read_release_version():
-    try:
-        f = open("RELEASE-VERSION", "r")
-
+def get_version():
+    if isdir(join(dirname(__file__), '.git')):
+        # Get the version using "git describe".
+        cmd = 'git describe --tags --match [0-9]*'
         try:
-            version = f.readlines()[0]
-            return version.strip()
+            version = check_output(cmd.split()).decode().strip()
+        except CalledProcessError:
+            return
 
-        finally:
-            f.close()
+        # PEP 386 compatibility
+        if '-' in version:
+            version = '.post'.join(version.split('-')[:2])
 
-    except:
-        return None
+        # Update the RELEASE-VERSION file.
+        with open('RELEASE-VERSION', 'w') as f:
+            f.write('%s\n' % version)
 
-
-def write_release_version(version):
-    f = open("RELEASE-VERSION", "w")
-    f.write("%s\n" % version)
-    f.close()
-
-
-def get_git_version(abbrev=4):
-    # Read in the version that's currently in RELEASE-VERSION.
-
-    release_version = read_release_version()
-
-    # First try to get the current version using “git describe”.
-
-    version = call_git_describe(abbrev)
-
-    # If that doesn't work, fall back on the value that's in
-    # RELEASE-VERSION.
-
-    if version is None:
-        version = release_version
-
-    # If we still don't have anything, that's an error.
-
-    if version is None:
-        raise ValueError("Cannot find the version number!")
-
-    # If the current version is different from what's in the
-    # RELEASE-VERSION file, update the file to be current.
-
-    if version != release_version:
-        write_release_version(version)
-
-    # Finally, return the current version.
+    else:
+        # Read the version from the RELEASE-VERSION file.
+        with open('RELEASE-VERSION', 'r') as f:
+            version = f.read().strip()
 
     return version
 
 
-if __name__ == "__main__":
-    print get_git_version()
+if __name__ == '__main__':
+    print(get_version())
