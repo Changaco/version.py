@@ -6,10 +6,16 @@ from subprocess import CalledProcessError, check_output
 
 __all__ = ('get_version')
 
+tag_re = re.compile(r'\btag: ([0-9][^,]*)\b')
 version_re = re.compile('^Version: (.+)$', re.M)
 
 
 def get_version():
+    # Return the version if it has been injected into the file by git-archive
+    version = tag_re.search('$Format:%D$')
+    if version:
+        return version.group(1)
+
     d = dirname(__file__)
 
     if isdir(join(d, '.git')):
