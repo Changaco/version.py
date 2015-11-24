@@ -14,7 +14,7 @@ def get_version():
 
     if isdir(join(d, '.git')):
         # Get the version using "git describe".
-        cmd = 'git describe --tags --match [0-9]*'.split()
+        cmd = 'git describe --tags --match [0-9]* --dirty'.split()
         try:
             version = check_output(cmd).decode().strip()
         except CalledProcessError:
@@ -23,6 +23,9 @@ def get_version():
 
         # PEP 386 compatibility
         if '-' in version:
+            if version.endswith('-dirty'):
+                print('The working tree is dirty')
+                exit(1)
             version = '.post'.join(version.split('-')[:2])
 
     else:
