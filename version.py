@@ -1,12 +1,13 @@
 # Source: https://github.com/Changaco/version.py
 
-__all__ = ('get_version')
-
 from os.path import dirname, isdir, join
 import re
 from subprocess import CalledProcessError, check_output
 
+__all__ = ('get_version')
+
 version_re = re.compile('^Version: (.+)$', re.M)
+
 
 def get_version():
     d = dirname(__file__)
