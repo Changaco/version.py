@@ -21,7 +21,7 @@ def get_version():
             print('Unable to get version number from git tags')
             exit(1)
 
-        # PEP 386 compatibility
+        # PEP 440 compatibility
         if '-' in version:
             if version.endswith('-dirty'):
                 print('The working tree is dirty')
