@@ -1,26 +1,4 @@
-# This program is placed into the public domain.
-
-"""
-Gets the current version number.
-If in a git repository, it is the current git tag.
-Otherwise it is the one contained in the PKG-INFO file.
-
-To use this script, simply import it in your setup.py file
-and use the results of get_version() as your package version:
-
-    from version import *
-
-    setup(
-        ...
-        version=get_version(),
-        ...
-    )
-
-You need to distribute the version.py file in your sdist packages
-by adding the following line in the MANIFEST.in file:
-
-    include version.py
-"""
+# Source: https://github.com/Changaco/version.py
 
 __all__ = ('get_version')
 
