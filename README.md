@@ -1,10 +1,13 @@
 `version.py` saves you from having to hard-code the version number of your
 project by getting it from git tags (directly or indirectly).
 
-To use the script, simply import it in your `setup.py` file
-and use the results of `get_version()` as your package version:
+The tags that are considered to be version numbers are those that start with
+a digit.
 
-    from version import *
+To use the script, simply copy it into your project and call `get_version()`
+in your `setup.py` file:
+
+    from version import get_version
 
     setup(
         ...
@@ -23,5 +26,7 @@ to the `.gitattributes` file:
     version.py  export-subst
 
 ---
+
+Compatibility: python 3.x and 2.7
 
 Licence: [CC0 Public Domain Dedication](http://creativecommons.org/publicdomain/zero/1.0/)
