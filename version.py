@@ -24,14 +24,12 @@ def get_version():
         try:
             version = check_output(cmd).decode().strip()
         except CalledProcessError:
-            print('Unable to get version number from git tags')
-            exit(1)
+            raise RuntimeError('Unable to get version number from git tags')
 
         # PEP 440 compatibility
         if '-' in version:
             if version.endswith('-dirty'):
-                print('The working tree is dirty')
-                exit(1)
+                raise RuntimeError('The working tree is dirty')
             version = '.post'.join(version.split('-')[:2])
 
     else:
