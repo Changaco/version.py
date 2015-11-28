@@ -1,3 +1,7 @@
+*Note: I'm considering deprecating this project in favor of [setuptools_scm](https://pypi.python.org/pypi/setuptools_scm).*
+
+---
+
 `version.py` saves you from having to hard-code the version number of your
 project by getting it from git tags (directly or indirectly).
 
