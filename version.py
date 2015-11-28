@@ -6,7 +6,7 @@ from subprocess import CalledProcessError, check_output
 
 __all__ = ('get_version')
 
-tag_re = re.compile(r'\btag: ([0-9][^,]*)\b')
+tag_re = re.compile(r'\btag: v?([0-9][^,]*)\b')
 version_re = re.compile('^Version: (.+)$', re.M)
 
 
